@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { Formik } from "formik";
 import clsx from "clsx";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { debounce } from 'lodash';
 
 const validationSchema = yup.object().shape({
@@ -20,6 +20,17 @@ function App() {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(false);
   const formRef = useRef();
+
+  const handleKeyPress = useCallback(({ key }) => {
+    if(key === 'Escape') {
+      formRef.current.resetForm()
+    }
+  }, []);
+
+  useEffect(() => {
+    window.document.addEventListener('keydown', handleKeyPress);
+    return () => window.document.removeEventListener('keydown', handleKeyPress);
+  }, [handleKeyPress])
 
   const onSubmit = async (_, { resetForm }) => {
     try {
